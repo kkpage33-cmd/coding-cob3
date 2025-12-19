@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring</title>
+
+  <!-- CSS Baru (tema gold seperti background/menu) -->
+  <link rel="stylesheet" href="monitoring.css">
+
+  <!-- Font & Icon -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- MQTT -->
+  <script src="https://unpkg.com/paho-mqtt@1.1.0/paho-mqtt-min.js"></script>
+
+  <!-- JS Baru -->
+  <script defer src="monitoring.js"></script>
+</head>
+
+<body class="dark">
+
+  <!-- LOADER (2 detik) -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- BACKGROUND VIDEO + PARTICLES -->
+  <div class="bg-wrapper">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="bgMusic" src="musicbackground.mp3" loop preload="auto"></audio>
+
+  <!-- NAVBAR (konsisten tema) -->
+  <nav class="navbar">
+    <h2>⚡ Smart Lightning</h2>
+
+    <ul>
+      <li><a href="background.html#hero">Home</a></li>
+      <li><a href="background.html#anggota">Anggota</a></li>
+      <li><a href="background.html#overview">Overview</a></li>
+      <li><a href="menu.html"><i class="fa-solid fa-table-columns"></i> Our Project</a></li>
+      <li><a href="monitoring.html" class="active"><i class="fa-solid fa-satellite-dish"></i> Monitoring</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button id="logoutBtn" class="nav-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+
+      <button id="modeToggle" class="mode-btn" aria-label="Toggle mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MUSIC BUTTON -->
+  <button id="musicToggle" class="music-btn" aria-label="Toggle music" title="Klik untuk memutar musik">
+    <i class="fa-solid fa-music"></i>
+  </button>
+
+  <!-- ====== KONTEN UTAMA (STRUKTUR ASLI DIPERTAHANKAN) ====== -->
+  <div class="container">
+    <button class="back-btn" onclick="goPage('menu.html')">← Kembali ke Menu</button>
+
+    <h1>Monitoring Real-time 📡</h1>
+
+    <div class="monitoring-grid">
+
+      <div class="monitor-card">
+        <div class="monitor-title">📷 Kamera Real-time</div>
+        <div class="camera-box">
+          <img id="camera-stream" src="">
+        </div>
+      </div>
+
+      <div class="monitor-card">
+        <div class="monitor-title">📊 Status Sistem</div>
+
+        <div class="status-item">
+          <span class="status-label">Jumlah Orang Terdeteksi:</span>
+          <span id="detectedCount">0</span>
+        </div>
+
+        <div class="status-item">
+          <span class="status-label">Sensor PIR:</span>
+          <span id="pirStatus">Tidak Aktif</span>
+        </div>
+
+        <div class="status-item">
+          <span class="status-label">Status Gerakan:</span>
+          <span id="motionStatus">Tidak Ada Gerakan</span>
+        </div>
+
+        <!-- ============== MODE ALARM (STRUKTUR ASLI) ============== -->
+        <div class="status-item">
+          <div class="alarm-row">
+            <div>
+              <span class="status-label">Mode Alarm:</span>
+            </div>
+
+            <div class="alarm-toggle-wrapper">
+              <label class="alarm-switch">
+                <input type="checkbox" id="alarmToggle">
+                <span class="alarm-slider"></span>
+              </label>
+              <span id="alarmModeText">Nonaktif</span>
+            </div>
+
+            <div id="alarmIndicator" class="alarm-indicator alarm-off">
+              <span class="alarm-dot"></span>
+              <span>Alarm Off</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-item">
+          <div class="status-label" style="display:block;margin-bottom:6px;">Waktu Alarm</div>
+
+          <div class="alarm-time-inputs">
+            <span>Mulai:</span>
+            <input type="time" id="alarmStart" value="00:00">
+
+            <span>Selesai:</span>
+            <input type="time" id="alarmEnd" value="00:00">
+
+            <button id="alarmSetBtn" class="alarm-set-btn">SET / OK</button>
+          </div>
+
+          <div class="alarm-time-note">
+            Ubah jam/menit bebas. Perubahan waktu baru dikirim setelah tombol <b>SET</b> ditekan.
+          </div>
+        </div>
+        <!-- ======================================================= -->
+      </div>
+
+      <div class="monitor-card wide">
+        <div class="monitor-title">👥 Jumlah Orang per Area</div>
+
+        <div class="person-grid">
+          <div class="person-box"><span class="status-label">Grid 1</span><span class="count" id="g1">0</span></div>
+          <div class="person-box"><span class="status-label">Grid 2</span><span class="count" id="g2">0</span></div>
+          <div class="person-box"><span class="status-label">Grid 3</span><span class="count" id="g3">0</span></div>
+          <div class="person-box"><span class="status-label">Grid 4</span><span class="count" id="g4">0</span></div>
+        </div>
+      </div>
+
+      <div class="monitor-card wide">
+        <div class="monitor-title">💡 Status Lampu</div>
+
+        <div class="lamp-grid">
+          <div class="lamp-item">Lampu 1:<br><span id="lamp1" class="lamp-off">OFF</span></div>
+          <div class="lamp-item">Lampu 2:<br><span id="lamp2" class="lamp-off">OFF</span></div>
+          <div class="lamp-item">Lampu 3:<br><span id="lamp3" class="lamp-off">OFF</span></div>
+          <div class="lamp-item">Lampu 4:<br><span id="lamp4" class="lamp-off">OFF</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- ========================================================== -->
+
+  <footer>
+    <p>© 2025 Smart Lightning Project — Kendali Modern</p>
+  </footer>
+
+</body>
+</html>

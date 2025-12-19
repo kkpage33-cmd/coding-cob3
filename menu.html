@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Project — Dashboard</title>
+
+  <link rel="stylesheet" href="menu.css" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet"/>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+  <script defer src="menu.js"></script>
+</head>
+
+<body class="dark">
+
+  <!-- LOADER (2 detik) -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- BG VIDEO + PARTICLES -->
+  <div class="bg-wrapper">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <audio id="bgMusic" src="musicbackground.mp3" loop preload="auto"></audio>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <h2>⚡ Smart Lightning</h2>
+
+    <ul>
+      <li><a href="background.html#hero">Home</a></li>
+      <li><a href="background.html#anggota">Anggota</a></li>
+      <li><a href="background.html#overview">Overview</a></li>
+      <li><a href="menu.html" class="active"><i class="fa-solid fa-table-columns"></i> Our Project</a></li>
+      <li><a href="profile.html" class="profile-link" style="display:none;">Profile</a></li>
+      <li><a href="admin.html" class="admin-link" style="display:none;">Admin Panel</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button id="logoutBtn" class="nav-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+
+      <button id="modeToggle" class="mode-btn" aria-label="Toggle mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <button id="musicToggle" class="music-btn" aria-label="Toggle music" title="Klik untuk memutar musik">
+    <i class="fa-solid fa-music"></i>
+  </button>
+
+  <!-- DASHBOARD -->
+  <main class="dash-wrap" data-aos="fade-up">
+    <div class="dash-header">
+      <div>
+        <h1 class="dash-title">⚙️ Dashboard IoT System</h1>
+        <p class="dash-sub" id="userStatus">Status: -</p>
+      </div>
+      <a class="back-link" href="background.html#hero"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+    </div>
+
+    <div class="dash-hero">
+      <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b" alt="Tech" />
+    </div>
+
+    <h2 class="menu-title">Pilih Menu Utama</h2>
+
+    <div class="cards">
+      <button class="card-btn" id="btn-background">
+        <div class="card-top">
+          <i class="fa-solid fa-book-open"></i>
+          <h3>Latar Belakang</h3>
+        </div>
+        <p>Informasi project (Overview)</p>
+        <span class="tag">Public</span>
+      </button>
+
+      <button class="card-btn admin-only" id="btn-monitoring">
+        <div class="card-top">
+          <i class="fa-solid fa-chart-line"></i>
+          <h3>Monitoring Real-time</h3>
+        </div>
+        <p>Akses Admin</p>
+        <span class="tag danger">Admin</span>
+      </button>
+
+      <button class="card-btn admin-only" id="btn-database">
+        <div class="card-top">
+          <i class="fa-solid fa-database"></i>
+          <h3>Database Riwayat</h3>
+        </div>
+        <p>Akses Admin</p>
+        <span class="tag danger">Admin</span>
+      </button>
+    </div>
+
+    <div class="note-box">
+      <i class="fa-solid fa-circle-info"></i>
+      Tombol Monitoring & Database hanya muncul untuk role <b>admin</b>.
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Smart Lightning Project — Kendali Modern</p>
+  </footer>
+
+</body>
+</html>

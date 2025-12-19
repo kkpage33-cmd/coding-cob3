@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard Aktivitas Ruangan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icon -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- CSS (tema gold) -->
+  <link rel="stylesheet" href="databaseactivity.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <!-- JS halaman ini -->
+  <script defer src="databaseactivity.js"></script>
+
+  <!-- (Opsional) JS global kamu (kalau butuh goPage, dll) -->
+  <script defer src="script.js"></script>
+</head>
+
+<body class="dark">
+
+  <!-- LOADER (2 detik) -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- BACKGROUND VIDEO + PARTICLES -->
+  <div class="bg-wrapper">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="bgMusic" src="musicbackground.mp3" loop preload="auto"></audio>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <h2>⚡ Smart Lightning</h2>
+
+    <ul>
+      <li><a href="background.html#hero">Home</a></li>
+      <li><a href="background.html#anggota">Anggota</a></li>
+      <li><a href="background.html#overview">Overview</a></li>
+      <li><a href="menu.html"><i class="fa-solid fa-table-columns"></i> Our Project</a></li>
+      <li><a href="database.html" class="active"><i class="fa-solid fa-database"></i> Database</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button id="logoutBtn" class="nav-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+
+      <button id="modeToggle" class="mode-btn" aria-label="Toggle mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- TOMBOL MUSIK -->
+  <button id="musicToggle" class="music-btn" aria-label="Toggle music" title="Klik untuk memutar musik">
+    <i class="fa-solid fa-music"></i>
+  </button>
+
+  <!-- =========================
+       STRUKTUR DASHBOARD ASLI (DIPERTAHANKAN)
+       ========================= -->
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <h1>Room Activity Dashboard</h1>
+        <div class="subtitle">
+          Monitoring kamera + PIR + lampu · Data dari Firebase Realtime Database
+        </div>
+      </div>
+
+      <div class="top-buttons">
+        <button onclick="window.location.href='database.html'">
+          ← Kembali
+        </button>
+        <button id="refreshBtn">
+          ⟳ Refresh
+        </button>
+        <button id="exportBtn">
+          ⬇ Export CSV
+        </button>
+      </div>
+    </header>
+
+    <div class="filters">
+      <div>
+        <label for="rangeFilter">Rentang Waktu</label><br>
+        <select id="rangeFilter">
+          <option value="all">Semua data</option>
+          <option value="1h">1 jam terakhir</option>
+          <option value="6h">6 jam terakhir</option>
+          <option value="24h">24 jam terakhir</option>
+          <option value="today">Hari ini</option>
+        </select>
+      </div>
+      <div>
+        <label for="groupBy">Pengelompokan</label><br>
+        <select id="groupBy">
+          <option value="raw">Tanpa agregasi</option>
+          <option value="minute">Per menit</option>
+          <option value="hour">Per jam</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">
+            Jumlah Orang vs Waktu
+            <span class="pill" id="pointCount">0 titik</span>
+          </div>
+          <div class="card-subtitle">
+            Data dari kombinasi YOLO dan waktu logging (setiap deteksi / idle 5 detik).
+          </div>
+          <div class="chart-container">
+            <canvas id="peopleChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Status PIR & Lampu</div>
+          <div class="card-subtitle">
+            PIR (gerakan) & ON/OFF lampu 1–4 dalam rentang waktu terfilter.
+          </div>
+          <div class="small-chart">
+            <canvas id="pirChart"></canvas>
+          </div>
+          <div class="small-chart" style="margin-top: 6px;">
+            <canvas id="lampChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Heatmap Penggunaan Grid</div>
+          <div class="card-subtitle">
+            Berdasarkan akumulasi jumlah orang per grid dari log terfilter.
+          </div>
+          <div class="heatmap-grid" id="heatmapGrid"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-title">Aktivitas Terakhir</div>
+          <div id="lastActivity" class="last-activity">Belum ada data…</div>
+
+          <div style="margin-top: 10px;" class="card-title">Ringkasan Harian</div>
+          <div class="card-subtitle">
+            Based on log terfilter (range + grouping). Untuk laporan cepat.
+          </div>
+          <div class="summary-grid" id="summaryGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-title">
+          Timeline Log Realtime
+          <span class="pill" id="logCountChip">0 log</span>
+        </div>
+        <div class="card-subtitle">
+          Riwayat kondisi (people, PIR, lampu, grid). Scroll untuk melihat lebih lama.
+        </div>
+        <div class="timeline" id="timelineContainer"></div>
+        <div class="export-info">
+          Export CSV berisi kolom terpisah: timestamp, pir, people, lamp1-4, grid1-4.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Smart Lightning Project — Kendali Modern</p>
+  </footer>
+
+</body>
+</html>

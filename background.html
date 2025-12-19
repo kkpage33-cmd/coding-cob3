@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Background — Smart Lightning Project</title>
+
+  <link rel="stylesheet" href="background.css" />
+
+  <!-- Font & Icon -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- AOS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet"/>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+  <!-- ✅ Firebase (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <script src="firebase-init.js"></script>
+    <script defer src="background.js"></script>
+    <script defer src="auth-compat.js"></script>
+
+
+  <!-- JS kamu (sudah versi Firebase di bawah) -->
+  <script defer src="background.js"></script>
+</head>
+
+<body class="dark">
+
+  <!-- LOADER (2 detik) -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- BACKGROUND VIDEO + PARTICLES -->
+  <div class="bg-wrapper">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="bgMusic" src="musicbackground.mp3" loop preload="auto"></audio>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <h2>⚡ Smart Lightning</h2>
+
+    <ul>
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#anggota">Anggota</a></li>
+      <li><a href="#overview">Overview</a></li>
+
+      <!-- Our Project -> menu.html (wajib login) -->
+      <li><a href="menu.html" class="ourproject-link"><i class="fa-solid fa-table-columns"></i> Our Project</a></li>
+
+      
+      
+    </ul>
+
+    <div class="nav-actions">
+      <button id="loginBtn" class="nav-btn">
+        <i class="fa-solid fa-user"></i> Login
+      </button>
+
+      <button id="logoutBtn" class="nav-btn" style="display:none;">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+
+      <button id="modeToggle" class="mode-btn" aria-label="Toggle mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MUSIC -->
+  <button id="musicToggle" class="music-btn" aria-label="Toggle music" title="Klik untuk memutar musik">
+    <i class="fa-solid fa-music"></i>
+  </button>
+
+  <!-- HERO -->
+  <header class="hero" id="hero">
+    <div class="hero-content" data-aos="fade-up">
+      <h1 class="title">Smart Secure Lighting System: Real-Time Monitoring & Telegram Notifications</h1>
+      <p class="subtitle">Project Akhir Mata Kuliah Kendali Modern</p>
+
+      <div class="hero-badges">
+        <span><i class="fa-solid fa-microchip"></i> IoT Based</span>
+        <span><i class="fa-solid fa-signal"></i> Real-time Monitoring</span>
+        <span><i class="fa-solid fa-lightbulb"></i> Smart Control</span>
+      </div>
+
+      <a class="cta-btn" href="#overview">
+        <i class="fa-solid fa-book-open"></i> Overview
+      </a>
+    </div>
+
+    <div class="floating-icons">
+      <i class="fa-solid fa-bolt"></i>
+      <i class="fa-solid fa-satellite-dish"></i>
+      <i class="fa-solid fa-wifi"></i>
+    </div>
+  </header>
+
+  <!-- ANGGOTA -->
+  <section class="anggota-section" id="anggota" data-aos="fade-up">
+    <h2 class="section-title">Kelompok Project</h2>
+
+    <div class="slider">
+      <button class="slider-btn prev" aria-label="Sebelumnya">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+
+      <div class="anggota-container slider-track">
+        <div class="card tilt">
+          <img src="img/anggota1.png" alt="Anggota 1">
+          <h3>Ariq Reza Amrullah</h3>
+          <p>4.32.23.1.03</p>
+        </div>
+
+        <div class="card tilt">
+          <img src="img/anggota2.png" alt="Anggota 2">
+          <h3>Malihah Catur Apriliani</h3>
+          <p>4.32.23.1.13</p>
+        </div>
+
+        <div class="card tilt">
+          <img src="img/anggota3.png" alt="Anggota 3">
+          <h3>Rendy Prasetya Herdianto</h3>
+          <p>4.32.23.1.19</p>
+        </div>
+      </div>
+
+      <button class="slider-btn next" aria-label="Berikutnya">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <main class="project-wrapper" id="overview" data-aos="fade-up">
+    <h2 class="section-title">Overview</h2>
+
+    <section class="project-section">
+      <h3 class="sub-title">Latar Belakang</h3>
+      <div class="glass-box">
+        <p>
+          Proyek Smart Secure Lighting System dibuat untuk mengurangi pemborosan energi dan meningkatkan pemantauan keamanan 
+pencahayaan ruangan. Sistem ini menggabungkan kamera berbasis YOLOv8 untuk mendeteksi orang dan sensor PIR 
+untuk mengonfirmasi gerakan, lalu menggunakan logika kendali untuk menyalakan lampu sesuai area: ruangan
+ dibagi menjadi 4 grid dan tiap grid memiliki satu lampu, sehingga saat kamera mendeteksi orang di grid tertentu 
+dan PIR aktif, lampu pada grid tersebut menyala, sedangkan jika salah satu kondisi tidak terpenuhi lampu tetap mati. 
+Selain itu, tersedia fitur notifikasi Telegram berbasis waktu, di mana pada jam yang ditentukan ketika kedua sensor 
+mendeteksi aktivitas, sistem mengambil screenshot tampilan kamera dan mengirimkannya ke Telegram sebagai peringatan adanya pergerakan orang.
+        </p>
+      </div>
+    </section>
+
+    <section class="project-section">
+      <h3 class="sub-title">Tujuan Sistem</h3>
+      <div class="goals-grid">
+        <div class="goal-card"><h4>🔋 Hemat Energi</h4><p>Lampu hanya menyala saat ada orang.</p></div>
+        <div class="goal-card"><h4>🔐 Keamanan Tambahan</h4><p>Mendeteksi aktivitas manusia secara otomatis.</p></div>
+        <div class="goal-card"><h4>📍 Menentukan Lokasi</h4><p>Sistem memilih lampu terdekat sesuai posisi orang.</p></div>
+        <div class="goal-card"><h4>🎥 Deteksi Akurat</h4><p>Kamera + YOLOv8 + PIR memberikan akurasi tinggi.</p></div>
+      </div>
+    </section>
+
+    <section class="project-section">
+      <h3 class="sub-title">Cara Kerja Sistem</h3>
+      <div class="timeline">
+        <div class="step-item"><span>1</span> Kamera memantau ruangan secara real-time.</div>
+        <div class="step-item"><span>2</span> YOLOv8 mendeteksi manusia dengan cepat dan akurat.</div>
+        <div class="step-item"><span>3</span> Sensor PIR mendeteksi gerakan dan panas tubuh.</div>
+        <div class="step-item"><span>4</span> Lampu menyala hanya jika kondisi sensor terpenuhi.</div>
+        <div class="step-item"><span>5</span> Sistem menentukan lampu paling dekat dengan posisi orang.</div>
+        <div class="step-item"><span>6</span> Lampu mati otomatis bila tidak ada aktivitas.</div>
+        <div class="step-item"><span>7</span> Jika alarm sudah di atur, kemudian mendeteksiorang, maka akan kirim chat telegram.</div>
+
+      </div>
+    </section>
+
+    <section class="project-section">
+  <h3 class="sub-title">Komponen Sistem</h3>
+
+  <!-- Subjudul 1: Hardware -->
+  <h4 class="components-subtitle">Hardware</h4>
+  <div class="components-grid">
+    <div class="component-item">
+      <img src="img/Kamera.png" alt="Kamera">
+      <h5>Kamera</h5>
+      <p>
+        Perangkat input visual untuk memantau ruangan secara real-time.
+        Frame video dari kamera menjadi sumber utama proses deteksi manusia.
+      </p>
+    </div>
+
+    <div class="component-item">
+      <img src="img/pir.jpg" alt="Sensor PIR">
+      <h5>Sensor PIR</h5>
+      <p>
+        Sensor gerak berbasis infra merah pasif untuk mendeteksi perubahan panas tubuh/manusia.
+        Dipakai sebagai verifikasi tambahan agar lampu tidak mudah “false trigger”.
+      </p>
+    </div>
+
+    <div class="component-item">
+      <img src="img/esp32.jpg" alt="ESP32">
+      <h5>ESP32</h5>
+      <p>
+        Mikrokontroler utama yang mengolah input sensor, menjalankan logika kontrol,
+        serta mengirim/ menerima data melalui Wi-Fi (misalnya via MQTT) untuk mengendalikan sistem.
+      </p>
+    </div>
+
+    <div class="component-item">
+      <img src="img/lampu.jpg" alt="Lampu LED">
+      <h5>Lampu (LED)</h5>
+      <p>
+        Aktuator/output pencahayaan. Lampu menyala atau mati berdasarkan keputusan sistem
+        (hasil deteksi kamera + status PIR + aturan kontrol).
+      </p>
+    </div>
+  </div>
+
+  <!-- Subjudul 2: Software -->
+  <h4 class="components-subtitle">Software</h4>
+  <div class="components-grid">
+    <div class="component-item">
+      <img src="img/mediapipe.jpg" alt="YOLOv8">
+      <h5>YOLOv8</h5>
+      <p>
+        Model deteksi objek berbasis AI untuk mengenali keberadaan manusia pada video.
+        Output-nya berupa koordinat (bounding box) dan confidence yang dipakai untuk keputusan kontrol.
+      </p>
+    </div>
+
+    <div class="component-item">
+      <img src="img/mosquitto.png" alt="Mosquitto">
+      <h5>Mosquitto (MQTT Broker)</h5>
+      <p>
+        Broker MQTT yang berperan sebagai “perantara pesan” antara perangkat/komponen.
+        Membantu komunikasi publish/subscribe agar data status dan perintah kontrol lebih terstruktur dan real-time.
+      </p>
+    </div>
+
+    <div class="component-item">
+      <img src="img/telegram.png" alt="Telegram">
+      <h5>Telegram (Bot/API)</h5>
+      <p>
+        Kanal notifikasi dan monitoring jarak jauh. Sistem dapat mengirim pesan status (mis. lampu ON/OFF,
+        deteksi manusia) dan peringatan penting melalui bot Telegram.
+      </p>
+    </div>
+
+        <div class="component-item">
+      <img src="img/firebase.png" alt="Firebase">
+      <h5>Firebase</h5>
+      <p>
+        Platform backend (BaaS) untuk autentikasi dan manajemen data aplikasi.
+        Pada proyek ini dapat dipakai untuk Firebase Auth (login/register) dan Firestore sebagai database
+        agar data user, role, serta konfigurasi sistem tersimpan rapi dan bisa diakses real-time.
+      </p>
+    </div>
+
+
+    <div class="component-item">
+      <img src="img/vscode.jpg" alt="VS Code">
+      <h5>VS Code</h5>
+      <p>
+        IDE/alat pengembangan untuk menulis, menjalankan, dan debugging program (mis. script AI, kontrol ESP32,
+        serta konfigurasi komunikasi). Membantu mempercepat pengembangan dan pemeliharaan sistem.
+      </p>
+    </div>
+  </div>
+
+  <!-- Subjudul 3: Honorable Mention -->
+  <h4 class="components-subtitle">Honorable Mention</h4>
+  <div class="components-grid">
+
+
+        <div class="component-item">
+      <img src="img/dell-inspiron-14.jpg" alt="Dell Inspiron 14 i3-4005U">
+      <h5>Dell Inspiron 14 (i3-4005U)</h5>
+      <p>
+        Laptop andalan untuk ngoding, testing, dan ngerapihin dokumentasi proyek.
+        Walau speknya sederhana, dia jadi “mesin tempur” yang konsisten dipakai selama proses pengembangan.
+      </p>
+    </div>
+
+
+    <div class="component-item">
+      <img src="img/chatgpt.jpg" alt="ChatGPT 5.2">
+      <h5>ChatGPT 5.2</h5>
+      <p>
+        Asisten AI untuk membantu perancangan ide, perapihan dokumentasi, dan troubleshooting kode/arsitektur.
+        Dipakai sebagai “co-pilot” pengembangan agar proses iterasi lebih cepat dan rapi.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+
+    <a class="back-top" href="#hero"><i class="fa-solid fa-arrow-up"></i> Kembali ke atas</a>
+  </main>
+
+  <!-- MODAL LOGIN/REGISTER -->
+  <div id="authModal" class="modal" aria-hidden="true">
+    <div class="modal-content" data-aos="zoom-in">
+      <span class="close" aria-label="Close modal">&times;</span>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-target="loginForm">Login</button>
+        <button class="tab-btn" data-target="registerForm">Register</button>
+      </div>
+
+      <div class="form-container">
+        <form id="loginForm" class="auth-form active">
+          <h3>Login</h3>
+          <label>Email</label>
+          <input id="loginEmail" type="email" placeholder="masukkan email" required>
+          <label>Password</label>
+          <input id="loginPassword" type="password" placeholder="masukkan password" required>
+          <button type="submit" class="submit-btn">Masuk</button>
+          <p class="mini-note">Login sekarang memakai Firebase Auth.</p>
+        </form>
+
+        <form id="registerForm" class="auth-form">
+          <h3>Register</h3>
+          <label>Nama Lengkap</label>
+          <input type="text" id="regName" placeholder="masukkan nama" required>
+          <label>Email</label>
+          <input type="email" id="regEmail" placeholder="masukkan email" required>
+          <label>Password</label>
+          <input type="password" id="regPassword" placeholder="buat password" required>
+
+          <label>Role</label>
+          <select id="regRole" required>
+            <option value="user">User</option>
+            <option value="admin">Admin (request)</option>
+          </select>
+
+          <button type="submit" class="submit-btn">Daftar</button>
+          <p class="mini-note">Catatan: role admin perlu aktivasi (bukan dari pilihan form).</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Smart Lightning Project — Kendali Modern</p>
+  </footer>
+<script defer src="auth-compat.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login History — Smart Lightning</title>
+
+  <link rel="stylesheet" href="databasehistory.css" />
+
+  <!-- Font & Icon -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- ✅ Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script defer src="databasehistory.js"></script>
+</head>
+
+<body class="dark">
+
+  <!-- LOADER (2 detik) -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- BACKGROUND VIDEO + PARTICLES -->
+  <div class="bg-wrapper">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="bgMusic" src="musicbackground.mp3" loop preload="auto"></audio>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <h2>🗃️ Login History</h2>
+
+    <ul class="nav-links">
+      <li><a href="background.html#hero"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="menu.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+      <li><a href="database.html"><i class="fa-solid fa-database"></i> Database</a></li>
+      <li><a class="active" href="databasehistory.html"><i class="fa-solid fa-right-to-bracket"></i> Login History</a></li>
+      <li><a href="databaseactivity.html"><i class="fa-solid fa-chart-line"></i> Activity</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button id="logoutBtn" class="nav-btn" style="display:none;">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+
+      <button id="modeToggle" class="mode-btn" aria-label="Toggle mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MUSIC -->
+  <button id="musicToggle" class="music-btn" aria-label="Toggle music" title="Klik untuk memutar musik">
+    <i class="fa-solid fa-music"></i>
+  </button>
+
+  <!-- MAIN -->
+  <main class="page">
+    <section class="hero-card">
+      <div class="hero-left">
+        <h1>Riwayat Login & Register</h1>
+        <p class="muted">
+          Data diambil dari <b>Firestore</b> koleksi <code>auth_logs</code>.
+          Akses baca hanya untuk <b>Admin</b> (sesuai rules).
+        </p>
+
+        <div class="chips">
+          <span class="chip"><i class="fa-solid fa-shield-halved"></i> Admin Only</span>
+          <span class="chip"><i class="fa-solid fa-cloud"></i> Realtime Logs</span>
+          <span class="chip"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</span>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <button id="backBtn" class="btn outline">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+        <button id="refreshBtn" class="btn">
+          <i class="fa-solid fa-rotate"></i> Refresh
+        </button>
+        <button id="exportBtn" class="btn gold">
+          <i class="fa-solid fa-download"></i> Export CSV
+        </button>
+      </div>
+    </section>
+
+    <!-- RESTRICTED / STATUS -->
+    <section id="statusBox" class="status-box" style="display:none;">
+      <div class="status-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="status-text">
+        <h3 id="statusTitle">Status</h3>
+        <p id="statusDesc" class="muted">...</p>
+      </div>
+    </section>
+
+    <!-- FILTERS -->
+    <section class="panel">
+      <div class="panel-title">
+        <i class="fa-solid fa-filter"></i> Filter & Pencarian
+      </div>
+
+      <div class="filters">
+        <div class="field">
+          <label>Rentang</label>
+          <select id="rangeFilter">
+            <option value="today">Hari ini</option>
+            <option value="7d" selected>7 hari</option>
+            <option value="30d">30 hari</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Tipe</label>
+          <select id="typeFilter">
+            <option value="all" selected>Semua</option>
+            <option value="login">login</option>
+            <option value="login_failed">login_failed</option>
+            <option value="register">register</option>
+            <option value="register_failed">register_failed</option>
+            <option value="logout">logout</option>
+          </select>
+        </div>
+
+        <div class="field grow">
+          <label>Cari Email</label>
+          <div class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchEmail" type="text" placeholder="contoh: user@gmail.com">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Tampilkan</label>
+          <select id="limitFilter">
+            <option value="50">50</option>
+            <option value="200" selected>200</option>
+            <option value="500">500</option>
+            <option value="1000">1000</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-grid" id="statsGrid" style="display:none;">
+      <div class="stat-card">
+        <div class="stat-label">Total Event</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-note muted" id="statRange">—</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Login Sukses</div>
+        <div class="stat-value" id="statLoginOK">0</div>
+        <div class="stat-note muted">type: login</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Login Gagal</div>
+        <div class="stat-value danger" id="statLoginFail">0</div>
+        <div class="stat-note muted">type: login_failed</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Register</div>
+        <div class="stat-value" id="statRegister">0</div>
+        <div class="stat-note muted">register / register_failed</div>
+      </div>
+
+      <div class="stat-card wide">
+        <div class="stat-label">Event Terakhir</div>
+        <div class="stat-value" id="statLast">—</div>
+        <div class="stat-note muted" id="statLastMeta">—</div>
+      </div>
+    </section>
+
+    <!-- TABLE -->
+    <section class="panel" id="tablePanel" style="display:none;">
+      <div class="panel-title">
+        <i class="fa-solid fa-table"></i> Tabel Riwayat
+        <span class="pill" id="countPill">0 data</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Email</th>
+              <th>Tipe</th>
+              <th>Status</th>
+              <th>Role</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody id="logBody">
+            <!-- diisi JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footnote muted">
+        Tips: data yang tampil mengikuti filter. Export CSV juga mengikuti filter yang aktif.
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 Smart Lightning Project — Gold Futuristic UI</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database</title>
+
+  <!-- CSS baru tema gold -->
+  <link rel="stylesheet" href="database.css">
+
+  <!-- Font & Icon -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- JS baru -->
+  <script defer src="database.js"></script>
+
+  <!-- JS lama kamu (fungsi goPage / loadDatabaseContent ada di sini) -->
+  <script defer src="script.js"></script>
+</head>
+
+<body class="dark">
+
+  <!-- LOADER (2 detik) -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- BACKGROUND VIDEO + PARTICLES (seperti monitoring/menu) -->
+  <div class="bg-wrapper">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="bgMusic" src="musicbackground.mp3" loop preload="auto"></audio>
+
+  <!-- NAVBAR (konsisten tema) -->
+  <nav class="navbar">
+    <h2>⚡ Smart Lightning</h2>
+
+    <ul>
+      <li><a href="background.html#hero">Home</a></li>
+      <li><a href="background.html#anggota">Anggota</a></li>
+      <li><a href="background.html#overview">Overview</a></li>
+      <li><a href="menu.html"><i class="fa-solid fa-table-columns"></i> Our Project</a></li>
+      <li><a href="database.html" class="active"><i class="fa-solid fa-database"></i> Database</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button id="logoutBtn" class="nav-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+
+      <button id="modeToggle" class="mode-btn" aria-label="Toggle mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MUSIC BUTTON -->
+  <button id="musicToggle" class="music-btn" aria-label="Toggle music" title="Klik untuk memutar musik">
+    <i class="fa-solid fa-music"></i>
+  </button>
+
+  <!-- ====== KONTEN UTAMA (STRUKTUR ASLI DIPERTAHANKAN) ====== -->
+  <div class="container">
+
+    <button class="back-btn" onclick="goPage('menu.html')">← Kembali ke Menu</button>
+
+    <h1>Database Riwayat 🗃️</h1>
+
+    <!-- 3 Pilihan Navigasi (tetap) -->
+    <div class="menu-options" style="margin-bottom: 25px; text-align:center;">
+      <button class="menu-btn" onclick="goPage('databasehistory.html')">
+        <i class="fa-solid fa-clock-rotate-left"></i> Login History
+      </button>
+
+      <button class="menu-btn" onclick="goPage('databaseactivity.html')">
+        <i class="fa-solid fa-chart-line"></i> Monitoring Activity
+      </button>
+
+      <button class="menu-btn" onclick="window.open('https://t.me/projetcmusiman', '_blank')">
+        <i class="fa-brands fa-telegram"></i> Telegram
+      </button>
+    </div>
+
+    <!-- output utama tetap -->
+    <div id="database-content"></div>
+
+  </div>
+  <!-- ========================================================= -->
+
+  <footer>
+    <p>© 2025 Smart Lightning Project — Kendali Modern</p>
+  </footer>
+
+  <!-- pemanggilan tetap -->
+  <script>
+    // tetap seperti punyamu
+    if (typeof loadDatabaseContent === "function") {
+      loadDatabaseContent();
+    }
+  </script>
+
+</body>
+</html>
